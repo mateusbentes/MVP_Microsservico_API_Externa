@@ -1,13 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import requests
+import os
 
 app = Flask(__name__)
 
 CORS(app)
 
-# Chave de integração da API do Notion (substitua pela sua)
-NOTION_TOKEN = "secret_9IyHhmCo1ajj8h6m3npJCZku57uKDrAgEv0pp0AbU02"
+load_dotenv()  # Carrega as variáveis do arquivo .env
+
+NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 # ID do banco de dados onde as notas serão salvas
 DATABASE_ID = "2f9e434650334cb480c5757b26dd0608"
 

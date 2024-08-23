@@ -2,3 +2,5 @@
 myvenv/
 # Cache de python
 **/__pycache__/
+#Notion Token
+.env
