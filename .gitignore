@@ -1,0 +1,4 @@
+#Meu ambiente virtual
+myvenv/
+# Cache de python
+**/__pycache__/
