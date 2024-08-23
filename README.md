@@ -1,6 +1,6 @@
 # Meu Back-End
 
-Back-end do MVP **Bloco de Notas** (Microsserviço de Front-End)
+Back-end do MVP **Bloco de Notas** (Microsserviço da API Externa)
 
 ---
 ## Como executar
