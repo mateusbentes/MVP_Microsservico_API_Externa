@@ -11,14 +11,20 @@ CORS(app)
 load_dotenv()  # Carrega as variáveis do arquivo .env
 
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-# ID do banco de dados onde as notas serão salvas
-DATABASE_ID = "2f9e434650334cb480c5757b26dd0608"
+DATABASE_ID = os.getenv("DATABASE_ID")
 
 headers = {
     "Authorization": "Bearer " + NOTION_TOKEN,
     "Content-Type": "application/json",
     "Notion-Version": "2022-06-28"
 }
+
+url = f"https://api.notion.com/v1/databases/{DATABASE_ID}"
+
+response = requests.get(url, headers=headers)
+
+print(response.status_code)
+print(response.json())
 
 def criar_pagina(titulo, conteudo):
     create_url = "https://api.notion.com/v1/pages"
@@ -41,7 +47,7 @@ def criar_pagina(titulo, conteudo):
                 "object": "block",
                 "type": "paragraph",
                 "paragraph": {
-                    "text": [
+                    "rich_text": [
                         {
                             "type": "text",
                             "text": {
