@@ -19,47 +19,48 @@ headers = {
     "Notion-Version": "2022-06-28"
 }
 
-url = f"https://api.notion.com/v1/databases/{DATABASE_ID}"
-
-response = requests.get(url, headers=headers)
-
-print(response.status_code)
-print(response.json())
-
 def criar_pagina(titulo, conteudo):
     create_url = "https://api.notion.com/v1/pages"
 
-    payload = {
-        "parent": {"database_id": DATABASE_ID},
-        "properties": {
-            "Title": {
-                "title": [
+    # Definindo as propriedades da página (o título)
+    properties = {
+        "Title": {
+            "title": [
+                {
+                    "text": {
+                        "content": titulo
+                    }
+                }
+            ]
+        }
+    }
+
+    # Definindo o conteúdo da página (exemplo de um parágrafo)
+    children = [
+        {
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [
                     {
+                        "type": "text",
                         "text": {
-                            "content": titulo
+                            "content": conteudo
                         }
                     }
                 ]
             }
-        },
-        "children": [
-            {
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {
-                    "rich_text": [
-                        {
-                            "type": "text",
-                            "text": {
-                                "content": conteudo
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
+        }
+    ]
+
+    # Montando o payload com as propriedades e o conteúdo
+    payload = {
+        "parent": {"database_id": DATABASE_ID},
+        "properties": properties,
+        "children": children
     }
 
+    # Fazendo a requisição para criar a página
     resposta = requests.post(create_url, headers=headers, json=payload)
 
     print("Status Code:", resposta.status_code)
