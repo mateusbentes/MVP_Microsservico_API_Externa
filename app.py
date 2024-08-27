@@ -19,6 +19,7 @@ oauth = OAuth2(
     client_id=os.getenv('BOX_CLIENT_ID'),
     client_secret=os.getenv('BOX_CLIENT_SECRET'),
     access_token=os.getenv('BOX_ACCESS_TOKEN')
+    refresh_token=os.getenv('BOX_REFRESH_TOKEN')
 )
 
 # Cria o cliente do Box
@@ -31,9 +32,10 @@ def criar_arquivo_box(client, titulo, conteudo):
     file_stream = io.BytesIO(conteudo.encode('utf-8'))
 
     # O método upload_stream() recebe o nome do arquivo como primeiro argumento e o stream de dados como segundo
-    arquivo = arquivo_raiz.upload_stream(nome_arquivo, file_stream)
+    arquivo = client.file(arquivo_raiz.get_items(fields=['name'], limit=100).get('entries')[0]['id'])
 
-    return arquivo
+    # Retorna um dicionário contendo informações relevantes do arquivo
+    return {"id": arquivo.id, "name": arquivo.name, "size": arquivo.size}
 
 @app.route('/', methods=['POST'])
 def adicionar_nota():
@@ -44,8 +46,11 @@ def adicionar_nota():
     if not titulo or not conteudo:
         return jsonify({"error": "Faltando título ou conteúdo"}), 400
     
-    resposta = criar_arquivo_box(client, titulo, conteudo)
-    return jsonify(resposta)
+    try:
+        resposta = criar_arquivo_box(client, titulo, conteudo)
+        return jsonify(resposta), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     #app.run(debug=True)
