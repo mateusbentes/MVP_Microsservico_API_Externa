@@ -1,72 +1,39 @@
 from flask import Flask, request, jsonify
+from boxsdk import OAuth2, Client
+from boxsdk.exception import BoxAPIException
 from flask_cors import CORS
-from dotenv import load_dotenv
 import requests
+from dotenv import load_dotenv
 import os
+import io
 
 app = Flask(__name__)
 
 CORS(app)
 
-load_dotenv()  # Carrega as variáveis do arquivo .env
+# Carrega variáveis do ambiente
+load_dotenv()
 
-NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-DATABASE_ID = os.getenv("DATABASE_ID")
+# Configuração OAuth2
+oauth = OAuth2(
+    client_id=os.getenv('BOX_CLIENT_ID'),
+    client_secret=os.getenv('BOX_CLIENT_SECRET'),
+    access_token=os.getenv('BOX_ACCESS_TOKEN')
+)
 
-headers = {
-    "Authorization": "Bearer " + NOTION_TOKEN,
-    "Content-Type": "application/json",
-    "Notion-Version": "2022-06-28"
-}
+# Cria o cliente do Box
+client = Client(oauth)
 
-def criar_pagina(titulo, conteudo):
-    create_url = "https://api.notion.com/v1/pages"
+def criar_arquivo_box(client, titulo, conteudo):
+    arquivo_raiz = client.folder('0')  # '0' refere-se à raiz da conta do Box
 
-    # Definindo as propriedades da página (o título)
-    properties = {
-        "Title": {
-            "title": [
-                {
-                    "text": {
-                        "content": titulo
-                    }
-                }
-            ]
-        }
-    }
+    nome_arquivo = f"{titulo}.txt"
+    file_stream = io.BytesIO(conteudo.encode('utf-8'))
 
-    # Definindo o conteúdo da página (exemplo de um parágrafo)
-    children = [
-        {
-            "object": "block",
-            "type": "paragraph",
-            "paragraph": {
-                "rich_text": [
-                    {
-                        "type": "text",
-                        "text": {
-                            "content": conteudo
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+    # O método upload_stream() recebe o nome do arquivo como primeiro argumento e o stream de dados como segundo
+    arquivo = arquivo_raiz.upload_stream(nome_arquivo, file_stream)
 
-    # Montando o payload com as propriedades e o conteúdo
-    payload = {
-        "parent": {"database_id": DATABASE_ID},
-        "properties": properties,
-        "children": children
-    }
-
-    # Fazendo a requisição para criar a página
-    resposta = requests.post(create_url, headers=headers, json=payload)
-
-    print("Status Code:", resposta.status_code)
-    print("Response Content:", resposta.content)
-    
-    return resposta.json()
+    return arquivo
 
 @app.route('/', methods=['POST'])
 def adicionar_nota():
@@ -77,7 +44,7 @@ def adicionar_nota():
     if not titulo or not conteudo:
         return jsonify({"error": "Faltando título ou conteúdo"}), 400
     
-    resposta = criar_pagina(titulo, conteudo)
+    resposta = criar_arquivo_box(client, titulo, conteudo)
     return jsonify(resposta)
 
 if __name__ == '__main__':
