@@ -17,10 +17,10 @@ def obter_tokens():
     url = "https://api.box.com/oauth2/token"
     client_id = os.getenv('BOX_CLIENT_ID')
     client_secret = os.getenv('BOX_CLIENT_SECRET')
-    code = os.getenv('AUTHORIZATION_CODE')  # O código de autorização que você obteve
+    refresh_token = os.getenv('BOX_REFRESH_TOKEN')  # O código de autorização que você obteve
     data = {
-        'grant_type': 'authorization_code',
-        'code': code,
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token,
         'client_id': client_id,
         'client_secret': client_secret
     }
@@ -32,12 +32,15 @@ def obter_tokens():
         resposta_json = resposta.json()
 
         access_token = resposta_json.get('access_token')
-        refresh_token = resposta_json.get('refresh_token')
+        novo_refresh_token = resposta_json.get('refresh_token')
 
         if not access_token:
             raise Exception("Failed to retrieve access token: {}".format(resposta_json))
 
-        return access_token, refresh_token
+        # Atualize o refresh token no ambiente ou em um armazenamento seguro
+        os.environ['BOX_REFRESH_TOKEN'] = novo_refresh_token
+
+        return access_token, novo_refresh_token
 
     except requests.exceptions.RequestException as e:
         print(f"Error retrieving tokens: {e}")
@@ -49,7 +52,8 @@ def criar_cliente_box():
     oauth = OAuth2(
         client_id=os.getenv('BOX_CLIENT_ID'),
         client_secret=os.getenv('BOX_CLIENT_SECRET'),
-        access_token=access_token
+        access_token=access_token,
+        refresh_token=refresh_token
     )
 
     return Client(oauth)
