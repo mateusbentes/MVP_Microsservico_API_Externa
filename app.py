@@ -57,9 +57,10 @@ def criar_cliente_box():
 # Função para criar arquivo no Box
 def criar_arquivo_box(client, titulo, conteudo):
     arquivo_raiz = client.folder('0')  # '0' refere-se à raiz da conta do Box
+
     nome_arquivo = f"{titulo}.txt"
     file_stream = io.BytesIO(conteudo.encode('utf-8'))
-    arquivo = arquivo_raiz.upload_stream(nome_arquivo, file_stream)
+    arquivo = arquivo_raiz.upload_stream(file_stream, nome_arquivo)
 
     return {"id": arquivo.id, "name": arquivo.name, "size": arquivo.size}
 
