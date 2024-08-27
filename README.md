@@ -57,11 +57,11 @@ Navegue até o diretório que contém o Dockerfile e o requirements.txt no termi
 Execute **como administrador** o seguinte comando para construir a imagem Docker:
 
 ```
-$ docker build -t microsservico-Notion  .
+$ docker build -t microsservico-Box  .
 ```
 
 Uma vez criada a imagem, para executar o container basta executar, **como administrador**, seguinte o comando:
 
 ```
-$ docker run --network="host" microsservico-Notion
+$ docker run --network="host" microsservico-Box
 ```
