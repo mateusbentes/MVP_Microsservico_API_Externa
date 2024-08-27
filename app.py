@@ -26,17 +26,22 @@ def obter_tokens():
     }
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}  
 
-    resposta = requests.post(url, data=data, headers=headers)
-    resposta.raise_for_status()  # Levanta uma exceção para códigos de status não 200
-    resposta_json = resposta.json()
-    
-    access_token = resposta_json.get('access_token')
-    refresh_token = resposta_json.get('refresh_token')
-    
-    if access_token:
+    try:
+        resposta = requests.post(url, data=data, headers=headers)
+        resposta.raise_for_status()  # Levanta uma exceção para códigos de status não 200
+        resposta_json = resposta.json()
+
+        access_token = resposta_json.get('access_token')
+        refresh_token = resposta_json.get('refresh_token')
+
+        if not access_token:
+            raise Exception("Failed to retrieve access token: {}".format(resposta_json))
+
         return access_token, refresh_token
-    else:
-        raise Exception("Failed to retrieve access token")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error retrieving tokens: {e}")
+        raise  # Re-raise a exceção para ser capturada pela função chamador
 
 # Função para criar o cliente Box autenticado
 def criar_cliente_box():
