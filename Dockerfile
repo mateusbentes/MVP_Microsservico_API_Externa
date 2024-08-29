@@ -5,6 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Arquivo requirements.txt e app.py para o diretório de trabalho
+COPY .env /app/
 COPY requirements.txt .
 COPY app.py .
 
