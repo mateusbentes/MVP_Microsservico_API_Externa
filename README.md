@@ -5,7 +5,7 @@ Back-end do MVP **Bloco de Notas** (Microsserviço da API Externa)
 ---
 ## Passos iniciais
 
-> É necessário ter uma conta no Box junto com uma conta no Box Developer Console [Box Developer Console](https://app.box.com/developers/console).
+> É necessário ter uma conta no Box junto com uma conta no [Box Developer Console](https://app.box.com/developers/console).
 
 > É necessário a criação de uma nova aplicação com autenticação OAuth 2.0 e dentro da aplicação em Configuration é necessário criar um link em OAuth 2.0 Redirect URIs da seguinte maneira http://localhost/callback
 
