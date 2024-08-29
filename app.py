@@ -59,11 +59,11 @@ def criar_cliente_box():
     return Client(oauth)
 
 # Função para criar arquivo no Box
-def criar_arquivo_box(client, titulo, conteudo):
+def criar_arquivo_box(client, titulo, texto):
     arquivo_raiz = client.folder('0')  # '0' refere-se à raiz da conta do Box
 
     nome_arquivo = f"{titulo}.txt"
-    file_stream = io.BytesIO(conteudo.encode('utf-8'))
+    file_stream = io.BytesIO(texto.encode('utf-8'))
     arquivo = arquivo_raiz.upload_stream(file_stream, nome_arquivo)
 
     return {"id": arquivo.id, "name": arquivo.name, "size": arquivo.size}
@@ -72,14 +72,14 @@ def criar_arquivo_box(client, titulo, conteudo):
 def adicionar_nota():
     dados = request.json
     titulo = dados.get('titulo')
-    conteudo = dados.get('conteudo')
+    texto = dados.get('texto')
     
-    if not titulo or not conteudo:
-        return jsonify({"error": "Faltando título ou conteúdo"}), 400
+    if not titulo or not texto:
+        return jsonify({"error": "Faltando título ou texto"}), 400
     
     try:
         client = criar_cliente_box()
-        resposta = criar_arquivo_box(client, titulo, conteudo)
+        resposta = criar_arquivo_box(client, titulo, texto)
         return jsonify(resposta), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
