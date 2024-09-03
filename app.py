@@ -7,6 +7,8 @@ import os
 import io
 
 app = Flask(__name__)
+
+# CORS adicona o método POST
 CORS(app)
 
 # Carrega variáveis do ambiente
@@ -17,7 +19,7 @@ def obter_tokens():
     url = "https://api.box.com/oauth2/token"
     client_id = os.getenv('BOX_CLIENT_ID')
     client_secret = os.getenv('BOX_CLIENT_SECRET')
-    refresh_token = os.getenv('BOX_REFRESH_TOKEN')  # O código de autorização que você obteve
+    refresh_token = os.getenv('BOX_REFRESH_TOKEN')  # Código de autorização que é obtido
     data = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
@@ -37,7 +39,7 @@ def obter_tokens():
         if not access_token:
             raise Exception("Failed to retrieve access token: {}".format(resposta_json))
 
-        # Atualize o refresh token no ambiente ou em um armazenamento seguro
+        # Atualiza o refresh token no ambiente ou em um armazenamento seguro
         os.environ['BOX_REFRESH_TOKEN'] = novo_refresh_token
 
         return access_token, novo_refresh_token
@@ -68,6 +70,7 @@ def criar_arquivo_box(client, titulo, texto):
 
     return {"id": arquivo.id, "name": arquivo.name, "size": arquivo.size}
 
+# Médoto POST
 @app.route('/', methods=['POST'])
 def adicionar_nota():
     dados = request.json
