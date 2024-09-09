@@ -8,6 +8,8 @@ import io
 import tempfile
 
 app = Flask(__name__)
+
+# CORS adicona o método POST e PUT
 CORS(app)
 
 # Carrega variáveis do ambiente
@@ -32,7 +34,7 @@ def obter_tokens():
 
     try:
         resposta = requests.post(url, data=data, headers=headers)
-        resposta.raise_for_status()
+        resposta.raise_for_status()  # Levanta uma exceção para códigos de status não 200
         resposta_json = resposta.json()
 
         access_token = resposta_json.get('access_token')
@@ -41,6 +43,7 @@ def obter_tokens():
         if not access_token:
             raise Exception("Failed to retrieve access token: {}".format(resposta_json))
 
+        # Atualiza o refresh token no ambiente ou em um armazenamento seguro
         os.environ['BOX_REFRESH_TOKEN'] = novo_refresh_token
 
         return access_token, novo_refresh_token
