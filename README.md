@@ -7,7 +7,7 @@ Back-end do MVP **Bloco de Notas** (Microsserviço da API Externa)
 
 > É necessário ter uma conta no Box junto com uma conta no [Box Developer Console](https://app.box.com/developers/console).
 
-> É necessário a criação de uma nova aplicação com autenticação OAuth 2.0 e dentro da aplicação em Configuration é necessário criar um link em OAuth 2.0 Redirect URIs da seguinte maneira http://localhost/callback
+> É necessário a criação de uma nova aplicação com autenticação OAuth 2.0 e dentro da aplicação em Configuration é necessário marcar a opição Write all files an folders stored in BOX e criar um link em OAuth 2.0 Redirect URIs da seguinte maneira http://localhost/callback
 
 Após clonar o repositório, é necessário ir ao diretório raiz e criar um arquivo .env com a seguinte estrutura:
 
